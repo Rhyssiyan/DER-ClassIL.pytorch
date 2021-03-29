@@ -1,0 +1,91 @@
+exp:
+  name: "CIFAR100B0S10_DER_wo_prune"
+  savedir: "./logs"
+  tensorboard_dir: "./tensorboard"
+  debug: False
+
+
+#Model Cfg
+model: "incmodel"
+convnet: 'resnet18' #modified_resnet32, resnet18
+train_head: 'softmax'
+infer_head: 'softmax'
+channel: 64
+use_bias: False
+last_relu: False
+
+der: False
+use_aux_cls: False
+aux_n+1: False
+distillation: "none"
+
+reuse_oldfc: False
+weight_normalization: False
+val_per_n_epoch: 1 # Validation Per N epoch. -1 means the function is off.
+save_ckpt: True
+display_norm: False
+
+#Optimization;Training related
+task_max: 10
+lr_min: 0.00005
+lr: 0.1 #  0.0005# # 0.0003 2 0.001
+weight_decay: 0.0005 #0.0005 #0.00001 0.0005
+dynamic_weight_decay: False
+scheduler: 'multistep' #'multistep' cos
+scheduling:
+  - 48 #100 # 48 our
+  - 63 #120 # 63 our
+lr_decay: 0.1 #0.1 # LUCIR 0.1 our 0.2 LR LR multiplied by it
+optimizer: "sgd" #LUCIR "sgd" our adam
+epochs: 70 #Number of epochs per task our 70
+
+postprocessor:
+  enable: False
+  type: 'bic' #'bic', 'wa'
+  epochs: 1
+  batch_size: 128
+  lr: 0.1
+  scheduling:
+    - 60
+    - 90
+    - 120
+  lr_decay_factor: 0.1
+  weight_decay: 0.0005
+
+decouple:
+  enable: False
+  epochs: 30
+  fullset: False
+  lr: 0.1
+  scheduling:
+    - 48
+    - 63
+  lr_decay: 0.3
+  weight_decay: 0.0005
+  temperature: 5.0
+
+
+# Dataset Cfg
+dataset: "cifar100" #'imagenet100', 'cifar100'
+trial: 0
+increment: 5
+batch_size: 128
+workers: 8
+validation: 0 # Validation split (0. <= x <= 1.)
+random_classes: False #Randomize classes order of increment
+start_class: 50 # number of tasks for the first step, start from 0.
+start_task: 1
+max_task: # Cap the number of task
+
+#Memory
+coreset_strategy: "random" #"iCaRL"  ,random, inccore, k-nearest-mean
+mem_size_mode: "uniform_fixed_total_mem" #uniform_fixed_per_cls, uniform_fixed_total_mem, dynamic_fixed_per_cls
+memory_size: 2000 # Max number of storable examplars
+fixed_memory_per_cls: 30 # the fixed number of exemplars per cls
+
+# Misc
+device: 0 #GPU index to use, for cpu use -1
+seed: 1993
+
+
+

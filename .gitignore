@@ -1,0 +1,9 @@
+*.pth
+./data/cifar100
+./data/imagenet100_b0
+./data/imagenet100_b50
+tensorboard/
+logs/
+__pycache__
+*.pyc
+
