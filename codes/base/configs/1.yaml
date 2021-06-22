@@ -59,7 +59,7 @@ postprocessor:
   weight_decay: 0.0005
 
 decouple:
-  enable: True
+  enable: True 
   epochs: 50
   fullset: False
   lr: 0.05

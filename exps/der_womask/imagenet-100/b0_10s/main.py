@@ -40,7 +40,7 @@ import torch
 
 from inclearn.tools import factory, results_utils, utils
 from inclearn.learn.pretrain import pretrain
-
+from inclearn.tools.metrics import IncConfusionMeter
 
 def initialization(config, seed, mode, exp_id):
     # Add it if your input size is fixed
@@ -179,6 +179,45 @@ def do_pretrain(cfg, ex, model, device, train_loader, test_loader):
     else:
         pretrain(cfg, ex, model, device, train_loader, test_loader, model_path)
 
+@ex.command
+def test(_run, _rnd, _seed):
+    cfg, ex.logger, tensorboard = initialization(_run.config, _seed, "test", _run._id)
+
+    trial_i = 0
+    cfg.data_folder = osp.join(base_dir, "data")
+    inc_dataset = factory.get_data(cfg, trial_i)
+    # inc_dataset._current_task = taski
+    # train_loader = inc_dataset._get_loader(inc_dataset.data_cur, inc_dataset.targets_cur)
+    model = factory.get_model(cfg, trial_i, _run, ex, tensorboard, inc_dataset)
+    model._network.task_size = cfg.increment
+
+    test_results = results_utils.get_template_results(cfg)
+    for taski in range(inc_dataset.n_tasks):
+        task_info, train_loader, _, test_loader = inc_dataset.new_task()
+        model.set_task_info(
+            task=task_info["task"],
+            total_n_classes=task_info["max_class"],
+            increment=task_info["increment"],
+            n_train_data=task_info["n_train_data"],
+            n_test_data=task_info["n_test_data"],
+            n_tasks=task_info["max_task"]
+        )
+        model.before_task(taski, inc_dataset)
+        state_dict = torch.load(f'./ckpts/step{taski}.ckpt')
+        model._parallel_network.load_state_dict(state_dict)
+        model.eval()
+
+        #Build exemplars
+        model.after_task(taski, inc_dataset)
+
+        ypred, ytrue = model.eval_task(test_loader)
+
+        test_acc_stats = utils.compute_accuracy(ypred, ytrue, increments=model._increments, n_classes=model._n_classes)
+        test_results['results'].append(test_acc_stats)
+        print(f"task{taski} test top1acc:{test_acc_stats['top1']}")
+
+    avg_test_acc = results_utils.compute_avg_inc_acc(test_results['results'])
+    print(f"Test Average Incremental Accuracy: {avg_test_acc}")
 
 if __name__ == "__main__":
     # ex.add_config('./codes/base/configs/default.yaml')

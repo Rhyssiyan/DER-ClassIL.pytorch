@@ -95,7 +95,7 @@ max_task: # Cap the number of task
 
 #Memory
 coreset_strategy: "iCaRL"  # iCaRL, random
-mem_size_mode: "uniform_fixed_total_mem" #uniform_fixed_per_cls, uniform_fixed_total_mem
+mem_size_mode: "uniform_fixed_per_cls" #uniform_fixed_per_cls, uniform_fixed_total_mem
 memory_size: 2000 # Max number of storable examplars
 fixed_memory_per_cls: 20 # the fixed number of exemplars per cls
 

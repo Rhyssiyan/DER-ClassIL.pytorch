@@ -2,9 +2,11 @@
 This repo is the official implementation of [DER: Dynamically Expandable Representation for Class Incremental Learning
 ](https://arxiv.org/abs/2103.16788) (CVPR 2021)
 
-## Installation
-### Environment Setup
+
+
 #### Dataset
+* ImageNet100
+Refer to [ImageNet100_Split](https://github.com/arthurdouillard/incremental_learning.pytorch/tree/master/imagenet_split)
 
 ## Training
 * Change to corresponding directory and run the following commands
@@ -13,6 +15,13 @@ sh scripts/run.sh
 ```
 
 ## Inference
+Inference command:
+```
+sh scripts/inference.sh
+```
+
+
+
 
 
 ## Tips
@@ -23,7 +32,7 @@ rsync -rv --exclude=tensorboard --exclude=logs --exclude=ckpts --exclude=__pycac
 
 
 ## Acknowledgement
-Thanks for the great code base from .
+Thanks for the great code base from https://github.com/arthurdouillard/incremental_learning.pytorch.
 
 
 

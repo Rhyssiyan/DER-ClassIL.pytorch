@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-name='10scifar100_trial0_debug'
+name='Inference'
 debug='1'
 comments='None'
 expid='1'
