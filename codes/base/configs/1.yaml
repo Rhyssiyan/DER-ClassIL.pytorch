@@ -83,10 +83,10 @@ pretrain:
 
 # Dataset Cfg
 dataset: "cifar100" #'imagenet100', 'cifar100'
-trial: 3
+trial: 2
 increment: 10
 batch_size: 128
-workers: 16
+workers: 8
 validation: 0 # Validation split (0. <= x <= 1.)
 random_classes: False #Randomize classes order of increment
 start_class: 0 # number of tasks for the first step, start from 0.

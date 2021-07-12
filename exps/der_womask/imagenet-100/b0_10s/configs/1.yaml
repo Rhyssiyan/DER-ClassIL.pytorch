@@ -39,11 +39,12 @@ scheduling:
   - 60
   - 120
   - 160
+  - 180
 lr_decay: 0.1 #0.1 # LUCIR 0.1 our 0.2 LR LR multiplied by it
 warmup: True
 warmup_epochs: 20
 optimizer: "sgd" #LUCIR "sgd" our adam
-epochs: 200 #Number of epochs per task our 70
+epochs: 220 #Number of epochs per task our 70
 resampling: False
 
 postprocessor:
@@ -86,7 +87,7 @@ dataset: "imagenet100" #'imagenet100', 'cifar100'
 trial: 0
 increment: 10
 batch_size: 256
-workers: 24
+workers: 16
 validation: 0 # Validation split (0. <= x <= 1.)
 random_classes: False #Randomize classes order of increment
 start_class: 0 # number of tasks for the first step, start from 0.

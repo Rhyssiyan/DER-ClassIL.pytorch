@@ -29,7 +29,7 @@ def conv1x1(in_planes, out_planes, stride=1):
 class BasicBlock(nn.Module):
     expansion = 1
 
-    def __init__(self, inplanes, planes, stride=1, downsample=None, last_layer=False):
+    def __init__(self, inplanes, planes, stride=1, downsample=None, remove_last_relu=False):
         super(BasicBlock, self).__init__()
         self.conv1 = conv3x3(inplanes, planes, stride)
         self.bn1 = nn.BatchNorm2d(planes)
@@ -38,7 +38,7 @@ class BasicBlock(nn.Module):
         self.bn2 = nn.BatchNorm2d(planes)
         self.downsample = downsample
         self.stride = stride
-        self.last_layer = last_layer
+        self.remove_last_relu = remove_last_relu
 
     def forward(self, x):
         identity = x
@@ -54,12 +54,13 @@ class BasicBlock(nn.Module):
             identity = self.downsample(x)
 
         out += identity
-        out = self.relu(out)
+        if not self.remove_last_relu:
+            out = self.relu(out)
         return out
 
 
 class ResNet(nn.Module):
-    def __init__(self, block, layers, nf=16, dropout=False, dataset='cifar', last_relu=True):
+    def __init__(self, block, layers, nf=16, dataset='cifar', start_class=0, remove_last_relu=False):
         super(ResNet, self).__init__()
         self.inplanes = nf
         self.conv1 = nn.Conv2d(3, nf, kernel_size=3, stride=1, padding=1, bias=False)
@@ -71,10 +72,6 @@ class ResNet(nn.Module):
         self.layer3 = self._make_layer(block, 4 * nf, layers[2], stride=2)
         self.avgpool = nn.AvgPool2d(8, stride=1)
 
-        self.use_dropout = dropout
-        self.drop1 = nn.Dropout2d(p=0.5)
-        self.drop2 = nn.Dropout2d(p=0.5)
-
         self.out_dim = 4 * nf * block.expansion
 
         for m in self.modules():
@@ -84,7 +81,7 @@ class ResNet(nn.Module):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
 
-    def _make_layer(self, block, planes, blocks, stride=1, last_phase=False):
+    def _make_layer(self, block, planes, blocks, stride=1, remove_last_relu=False):
         downsample = None
         if stride != 1 or self.inplanes != planes * block.expansion:
             downsample = nn.Sequential(
@@ -95,8 +92,13 @@ class ResNet(nn.Module):
         layers = []
         layers.append(block(self.inplanes, planes, stride, downsample))
         self.inplanes = planes * block.expansion
-        for i in range(1, blocks):
-            layers.append(block(self.inplanes, planes))
+        if remove_last_relu:
+            for i in range(1, blocks - 1):
+                layers.append(block(self.inplanes, planes))
+            layers.append(block(self.inplanes, planes, remove_last_relu=True))
+        else:
+            for _ in range(1, blocks):
+                layers.append(block(self.inplanes, planes))
 
         return nn.Sequential(*layers)
 

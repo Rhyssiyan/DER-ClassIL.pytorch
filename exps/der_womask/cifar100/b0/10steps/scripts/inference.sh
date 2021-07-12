@@ -26,6 +26,7 @@ else
         exp.ckptdir="./logs/" \
         exp.tensorboard_dir="./tensorboard/" \
         exp.debug=True \
+        load_mem=True \
         --name="${name}" \
         -D \
         -p \

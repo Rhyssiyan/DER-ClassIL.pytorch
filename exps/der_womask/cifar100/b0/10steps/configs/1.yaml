@@ -60,12 +60,11 @@ postprocessor:
 
 decouple:
   enable: True
-  epochs: 50
+  epochs: 30
   fullset: False
-  lr: 0.05
+  lr: 0.1
   scheduling:
     - 15
-    - 30
   lr_decay: 0.1
   weight_decay: 0.0005
   temperature: 5.0
@@ -83,10 +82,10 @@ pretrain:
 
 # Dataset Cfg
 dataset: "cifar100" #'imagenet100', 'cifar100'
-trial: 3
+trial: 2
 increment: 10
 batch_size: 128
-workers: 16
+workers: 8
 validation: 0 # Validation split (0. <= x <= 1.)
 random_classes: False #Randomize classes order of increment
 start_class: 0 # number of tasks for the first step, start from 0.

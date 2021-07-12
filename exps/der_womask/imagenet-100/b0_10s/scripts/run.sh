@@ -30,6 +30,5 @@ else
         -D \
         -p \
         --force \
-        epochs=110 \
         #--mongo_db=10.10.10.100:30620:debug
 fi

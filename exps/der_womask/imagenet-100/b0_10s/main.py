@@ -183,7 +183,7 @@ def do_pretrain(cfg, ex, model, device, train_loader, test_loader):
 def test(_run, _rnd, _seed):
     cfg, ex.logger, tensorboard = initialization(_run.config, _seed, "test", _run._id)
 
-    trial_i = 0
+    trial_i = cfg['trial']
     cfg.data_folder = osp.join(base_dir, "data")
     inc_dataset = factory.get_data(cfg, trial_i)
     # inc_dataset._current_task = taski
@@ -214,10 +214,10 @@ def test(_run, _rnd, _seed):
 
         test_acc_stats = utils.compute_accuracy(ypred, ytrue, increments=model._increments, n_classes=model._n_classes)
         test_results['results'].append(test_acc_stats)
-        print(f"task{taski} test top1acc:{test_acc_stats['top1']}")
+        ex.logger.info(f"task{taski} test top1acc:{test_acc_stats['top1']}")
 
     avg_test_acc = results_utils.compute_avg_inc_acc(test_results['results'])
-    print(f"Test Average Incremental Accuracy: {avg_test_acc}")
+    ex.logger.info(f"Test Average Incremental Accuracy: {avg_test_acc}")
 
 if __name__ == "__main__":
     # ex.add_config('./codes/base/configs/default.yaml')
