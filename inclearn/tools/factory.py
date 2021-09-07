@@ -32,6 +32,10 @@ def get_convnet(convnet_type, **kwargs):
 def get_model(cfg, trial_i, _run, ex, tensorboard, inc_dataset):
     if cfg["model"] == "incmodel":
         return models.IncModel(cfg, trial_i, _run, ex, tensorboard, inc_dataset)
+    if cfg["model"] == "weight_align":
+        return models.Weight_Align(cfg, trial_i, _run, ex, tensorboard, inc_dataset)
+    if cfg["model"] == "bic":
+        return models.BiC(cfg, trial_i, _run, ex, tensorboard, inc_dataset)
     else:
         raise NotImplementedError(cfg["model"])
 
